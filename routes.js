@@ -1,63 +1,38 @@
-const express = require("express");
-const app = express();
-
-const cookieParser = require("cookie-parser");
 const authMiddleware = require("./middlewares/auth");
 const UserController = require("./controllers/userController");
 const HomeController = require("./controllers/homeController");
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+const setupRoutes = (app) => {
+  app.set("view engine", "ejs");
+  app.set("views", "./views");
 
-app.set("view engine", "ejs");
-app.set("views", "./views");
+  app.get("/", (req, res) => {
+    res.redirect("/home");
+  });
 
-app.get("/", (req, res) => {
-  res.redirect("/home");
-});
+  app.get("/login", (req, res) => {
+    res.render("login");
+  });
 
-app.get("/:tenantId/login", (req, res) => {
-  const tenantId = req.params.tenantId;
-  if (tenantId.match(/^[a-zA-Z0-9]+$/)) {
-    res.render("login", { tenantId: tenantId });
-  } else {
-    res.status(400).json({ message: "Invalid tenantId" });
-  }
-});
+  app.post("/login", UserController.login);
 
-app.post("/:tenantId/login", (req, res) => {
-  const tenantId = req.params.tenantId;
-  // check if tenantid valid
-  if (tenantId.match(/^[a-zA-Z0-9]+$/)) {
-    UserController.login(tenantId, req, res);
-  } else {
-    res.status(400).json({ message: "Invalid tenantId" });
-  }
-});
+  app.get("/register", async (req, res) => {
+    // get all schemas
+    const db = require("./config/database");
+    // find all schemas which name starts with 'tenant'
+    const schemas = await db.showAllSchemas("tenant%");
+    // schema names as array
+    const tenants = schemas.filter((schema) => schema.startsWith("tenant"));
+    res.render("register", { tenants: tenants });
+  });
 
-app.get("/:tenantId/register", (req, res) => {
-  const tenantId = req.params.tenantId;
-  if (tenantId.match(/^[a-zA-Z0-9]+$/)) {
-    res.render("register", { tenantId: tenantId });
-  } else {
-    res.status(400).json({ message: "Invalid tenantId" });
-  }
-});
+  app.post("/register", UserController.register);
 
-app.post("/:tenantId/register", (req, res) => {
-  const tenantId = req.params.tenantId;
-  if (tenantId.match(/^[a-zA-Z0-9]+$/)) {
-    UserController.register(tenantId, req, res);
-  } else {
-    res.status(400).json({ message: "Invalid tenantId" });
-  }
-});
+  app.get("/logout", authMiddleware, UserController.logout);
 
-app.get("/logout", authMiddleware, UserController.logout);
+  app.get("/home", authMiddleware, HomeController.home);
 
-app.get("/home", authMiddleware, HomeController.home);
+  app.post("/post", authMiddleware, HomeController.post);
+};
 
-app.post("/post", authMiddleware, HomeController.post);
-
-module.exports = app;
+module.exports = setupRoutes;

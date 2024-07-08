@@ -1,11 +1,16 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
-exports.login = async (tenantId, req, res) => {
-  console.log(req.body);
-  const { User } = require("../model/setupAssociations")(tenantId);
+exports.login = async (req, res) => {
+  const { User } = require("../model/setupAssociations")("default_tenant");
   const name = req.body.name;
   const password = req.body.password;
+  const db = require("../config/database");
+
+  // sync default_tenant models
+  db.sync({ alter: true }).then(() => {
+    console.log("Database (default_tenant) & tables created!");
+  });
 
   // find user with username
   User.findOne({ where: { name: name } })
@@ -30,10 +35,13 @@ exports.login = async (tenantId, req, res) => {
     });
 };
 
-exports.register = (tenantId, req, res) => {
-  const { name, email, password } = req.body;
-  const tenant = "tenant1";
-  const { User } = require("../model/setupAssociations")("tenant1");
+exports.register = (req, res) => {
+  const { name, email, password, tenant } = req.body;
+  const { User } = require("../model/setupAssociations")(tenant);
+
+  if (!name || !email || !password || !tenant) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
 
   // Hash password asynchronously
   bcrypt.hash(password, 10, (err, hash) => {
@@ -55,7 +63,6 @@ exports.register = (tenantId, req, res) => {
 };
 
 exports.logout = (req, res) => {
-  const tenant = req.user.tenant;
   res.clearCookie("token");
-  res.redirect(`/${tenant}/login`);
+  res.redirect(`/login`);
 };
