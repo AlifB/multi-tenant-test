@@ -71,7 +71,7 @@
     <form action="/register" method="POST">
         <label for="tenant">Tenant:</label>
         <select name="tenant" id="tenant">
-            <% tenants.forEach(tenant => { %>
+            <% tenants.reverse().forEach(tenant => { %>
                 <option value="<%= tenant %>"><%= tenant %></option>
             <% }); %>
         </select>

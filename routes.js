@@ -19,8 +19,7 @@ const setupRoutes = (app) => {
   app.get("/register", async (req, res) => {
     // get all schemas
     const db = require("./config/database");
-    // find all schemas which name starts with 'tenant'
-    const schemas = await db.showAllSchemas("tenant%");
+    const schemas = await db.showAllSchemas();
     // schema names as array
     const tenants = schemas.filter((schema) => schema.startsWith("tenant"));
     res.render("register", { tenants: tenants });
@@ -28,7 +27,7 @@ const setupRoutes = (app) => {
 
   app.post("/register", UserController.register);
 
-  app.get("/logout", authMiddleware, UserController.logout);
+  app.get("/logout", UserController.logout);
 
   app.get("/home", authMiddleware, HomeController.home);
 

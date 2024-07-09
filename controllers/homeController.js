@@ -9,22 +9,19 @@ exports.home = async (req, res) => {
 
   const { User, Post } = require("../model/setupAssociations")(req.user.tenant);
 
-  // get user posts
-  const user = await User.findOne({
-    where: { id: req.user.id },
+  const posts = await Post.findAll({
     include: [
       {
-        model: Post,
-        as: "posts",
+        model: User,
+        as: "user",
       },
     ],
   });
-  console.log(user);
 
   res.render("home", {
     name: req.user.name,
     tenant: req.user.tenant,
-    posts: user.posts,
+    posts: posts,
   });
 };
 
