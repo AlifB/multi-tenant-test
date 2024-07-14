@@ -1,69 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        h1 {
-            font-family: Arial, sans-serif;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #ccc;
-            padding: 1rem;
-            border-radius: 5px;
-        }
-        label {
-            font-family: Arial, sans-serif;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        input {
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        button {
-            padding: 0.5rem;
-            border-radius: 5px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            font-family: Arial, sans-serif;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        a {
-            margin: 0 auto;
-        }
-    </style>
-</head>
-<body>
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-        <label for="name">Username:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-        <br>
-        <a href="/register">Register</a>
+<%- include('partials/header', { title: "Login", stylePaths: [] }) %>
+
+<main
+  class="uk-flex uk-flex-center uk-flex-middle uk-margin-auto uk-margin-auto-vertical"
+>
+  <div class="uk-card uk-card-body uk-card-default">
+    <h1 class="uk-card-title">Login</h1>
+    <form class="uk-form-stacked" action="/login" method="POST">
+      <div class="uk-margin">
+        <label class="uk-form-label" for="name">Username:</label>
+        <div class="uk-form-controls">
+          <input type="text" class="uk-input" id="name" name="name" required />
+        </div>
+      </div>
+      <div class="uk-margin">
+        <label class="uk-form-label" for="password">Password:</label>
+        <div class="uk-form-controls">
+          <input
+            type="password"
+            class="uk-input"
+            id="password"
+            name="password"
+            required
+          />
+        </div>
+      </div>
+      <div class="uk-margin">
+        <div class="uk-form-controls">
+          <button type="submit" class="uk-button uk-button-primary">
+            Login
+          </button>
+        </div>
+      </div>
+      <input type="hidden" name="_csrf" value="<%- csrfToken %>" />
     </form>
-</body>
-</html>
+    <a href="/register">Register</a>
+  </div>
+</main>
+
+<%- include('partials/notification', { errorMessage: errorMessage }) %>
+
+<%- include('partials/footer') %>

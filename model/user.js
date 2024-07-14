@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 // require sharedSequelize from config/database
-const db = require("../config/database");
+const { db } = require("../config/database");
 
 const UserModel = (tenant) => {
   const User = db.define(
@@ -27,6 +27,16 @@ const UserModel = (tenant) => {
       tenant: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      verified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      roles: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false,
+        defaultValue: ["user"],
       },
       createdAt: {
         type: DataTypes.DATE,

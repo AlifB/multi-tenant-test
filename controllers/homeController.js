@@ -1,4 +1,4 @@
-const db = require("../config/database");
+const { db } = require("../config/database");
 
 exports.home = async (req, res) => {
 
@@ -21,7 +21,11 @@ exports.home = async (req, res) => {
   res.render("home", {
     name: req.user.name,
     tenant: req.user.tenant,
+    isAdmin: req.user.roles.includes("admin"),
     posts: posts,
+    csrfToken: res.locals.csrfToken,
+    errorMessage: req.flash("error"),
+    infoMessage: req.flash("info"),
   });
 };
 
@@ -37,6 +41,6 @@ exports.post = async (req, res) => {
   });
 
   console.log(`Post created. Post ID: ${post.id}`);
-
+  req.flash("info", "Post created successfully!");
   res.redirect("/home");
 };

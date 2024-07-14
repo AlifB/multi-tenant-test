@@ -1,8 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-// Import required modules
-
-// Define the authentication middleware function
 const authMiddleware = (req, res, next) => {
     // Get the token from cookies
     const token = req.cookies.token;
@@ -14,18 +11,21 @@ const authMiddleware = (req, res, next) => {
 
     try {
         // Verify the token
-        const decoded = jwt.verify(token, 'your-secret-key');
-
-        // Attach the decoded user information to the request object
-        console.log(decoded.user);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded.user;
 
-        // Call the next middleware or route handler
-        next();
+        if(!req.user.verified) {
+            return res.status(401).render('notverified', { 
+                title: 'Not Verified', 
+                stylePaths: [], 
+                mailtext: encodeURIComponent(`Username: ${req.user.name}\nEmail: ${req.user.email}\n\nPlease verify the user.`),
+            });
+        }else {
+            next();
+        }
     } catch (error) {
-        return res.status(401).json({ message: 'Invalid token' });
+        return res.status(401).redirect('/login');
     }
 };
 
-// Export the middleware function
 module.exports = authMiddleware;

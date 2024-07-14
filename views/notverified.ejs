@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+
+<main class="uk-flex uk-flex-center uk-flex-middle uk-margin-auto uk-margin-auto-vertical">
+    <div class="uk-section uk-height-1-1 uk-margin-auto-vertical">
+        <div class="uk-card uk-card-body uk-card-default">
+            <h1 class="uk-card-title">Your account is not verified</h1>
+            <p>Please contact the <a href="mailto:alif.borgmeier@tu-dortmund.de?subject=Multi%20Tenant%20Test%20Account%20Verification&body=<%- mailtext %>">admin</a> to get verified.</p>
+            <div class="uk-margin">
+                <a id="logout" class="uk-button uk-button-secondary" href="/logout">Logout</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('partials/footer') %>

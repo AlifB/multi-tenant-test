@@ -1,0 +1,22 @@
+<% if (errorMessage.length > 0) { %>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => {
+    UIkit.notification({
+      message: "<%= errorMessage %>",
+      timeout: 5000,
+      status: "danger",
+    });
+  });
+</script>
+<% } %>
+
+<% if (infoMessage.length > 0) { %>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => {
+    UIkit.notification({
+      message: "<%= infoMessage %>",
+      timeout: 5000,
+    });
+  });
+</script>
+<% } %>
