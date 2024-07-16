@@ -1,6 +1,19 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+exports.loginPage = (req, res) => {
+  try {
+    res.render("login", {
+      csrfToken: res.locals.csrfToken,
+      errorMessage: req.flash("error"),
+      infoMessage: req.flash("info"),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 exports.login = async (req, res) => {
   try {
     const { User } = require("../model/setupAssociations")("default_tenant");
@@ -37,6 +50,25 @@ exports.login = async (req, res) => {
       });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.registerPage = async (req, res) => {
+  try {
+    // get all schemas
+    const { db } = require("../config/database");
+    const schemas = await db.showAllSchemas();
+    // schema names as array
+    const tenants = schemas.filter((schema) => schema.startsWith("tenant"));
+    res.render("register", {
+      tenants: tenants,
+      csrfToken: res.locals.csrfToken,
+      errorMessage: req.flash("error"),
+      infoMessage: req.flash("info"),
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

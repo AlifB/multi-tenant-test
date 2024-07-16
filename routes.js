@@ -13,35 +13,11 @@ const setupRoutes = (app) => {
     res.redirect("/home");
   });
 
-  app.get("/login", (req, res) => {
-    try {
-      res.render("login", { csrfToken: res.locals.csrfToken, errorMessage: req.flash("error"), infoMessage: req.flash("info") });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
+  app.get("/login", UserController.loginPage);
 
   app.post("/login", csrfValidation, UserController.login);
 
-  app.get("/register", async (req, res) => {
-    try {
-      // get all schemas
-      const db = require("./config/database");
-      const schemas = await db.showAllSchemas();
-      // schema names as array
-      const tenants = schemas.filter((schema) => schema.startsWith("tenant"));
-      res.render("register", {
-        tenants: tenants,
-        csrfToken: res.locals.csrfToken,
-        errorMessage: req.flash("error"),
-        infoMessage: req.flash("info"),
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
+  app.get("/register", UserController.registerPage);
 
   app.post("/register", UserController.register);
 
@@ -55,8 +31,22 @@ const setupRoutes = (app) => {
     "/admin-panel",
     authMiddleware,
     checkRolesMiddleware(["admin"]),
-    AdminController.adminPanel
+    AdminController.adminPanelOverview
   );
+
+  app.get(
+    "/admin-panel/verification",
+    authMiddleware,
+    checkRolesMiddleware(["admin"]),
+    AdminController.adminPanelVerification
+  );
+
+  app.get(
+    "/admin-panel/posts",
+    authMiddleware,
+    checkRolesMiddleware(["admin"]),
+    AdminController.adminPanelPosts
+  )
 
   app.post(
     "/admin-panel/update-verified",
@@ -64,6 +54,14 @@ const setupRoutes = (app) => {
     checkRolesMiddleware(["admin"]),
     csrfValidation,
     AdminController.updateVerified
+  );
+
+  app.post(
+    "/admin-panel/delete-post",
+    authMiddleware,
+    checkRolesMiddleware(["admin"]),
+    csrfValidation,
+    AdminController.deletePost
   );
 };
 

@@ -22,50 +22,61 @@
 </nav>
 
 <main>
+  <nav aria-label="Breadcrumb" class="uk-margin-left uk-margin-right uk-margin-top">
+    <ul class="uk-breadcrumb">
+        <li><span aria-current="page">Settings</span></li>
+    </ul>
+  </nav> 
   <div class="uk-section">
     <div class="uk-margin-left uk-margin-right">
       <h2>Welcome to the admin panel.</h2>
-      <p>Here you can manage the users verification</p>
+      <p>Here you can find all the admin settings</p>
     </div>
   </div>
   <div class="uk-section uk-padding-remove-vertical">
     <div class="uk-margin-left uk-margin-right">
-      <h2>Users</h2>
+      <h2>Admin settings</h2>
       <div class="uk-overflow-auto">
         <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
           <thead>
             <tr>
               <th class="uk-table-shrink"></th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Verified</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <% users.forEach(user => { %>
               <td>
                 <div
-                  class="uk-flex uk-flex-center uk-flex-middle"
+                  class="uk-flex uk-flex-center uk-flex-middle uk-light"
                   style="
                     width: 40px;
                     height: 40px;
-                    background-color: coral;
+                    background-color: dimgray;
                     border-radius: 50%;
                   "
                 >
-                  <%= user.name.toUpperCase().charAt(0) %>
+                  V
                 </div>
               </td>
-              <td><%= user.name %></td>
-              <td><%= user.email %></td>
-              <td>
-                <input class="uk-checkbox" type="checkbox" aria-label="Checkbox"
-                <%= user.verified ? 'checked' : '' %> data-userId="<%= user.id
-                %>" <%= user.id === currentUser.id ? 'disabled' : '' %> />
-              </td>
+              <td class="uk-table-link"><a href="/admin-panel/verification" class="uk-link-reset">Manage verification</a></td>
             </tr>
-            <% }) %>
+            <tr>
+                <td>
+                  <div
+                    class="uk-flex uk-flex-center uk-flex-middle uk-light"
+                    style="
+                      width: 40px;
+                      height: 40px;
+                      background-color: dimgray;
+                      border-radius: 50%;
+                    "
+                  >
+                    P
+                  </div>
+                </td>
+                <td class="uk-table-link"><a href="/admin-panel/posts" class="uk-link-reset">Manage posts</a></td>
+              </tr>
           </tbody>
         </table>
       </div>
@@ -73,54 +84,6 @@
   </div>
 </main>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach((checkbox) => {
-      const disabled = checkbox.hasAttribute("disabled");
-      if (!disabled) {
-        checkbox.addEventListener("change", async (event) => {
-          try {
-            const userId = event.target.getAttribute("data-userId");
-            const response = await fetch("/admin-panel/update-verified", {
-              redirect: "follow",
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                verified: event.target.checked,
-                userId: userId,
-                _csrf: "<%= csrfToken %>",
-              }),
-            });
-            const json = await response.json();
-            if (response.ok) {
-              UIkit.notification({
-                message: json.message || "User verified successfully.",
-                timeout: 5000,
-              });
-            } else {
-              UIkit.notification({
-                message:
-                  json.message ||
-                  "An error occurred while trying to verify the user.",
-                timeout: 5000,
-                status: "danger",
-              });
-            }
-          } catch (error) {
-            UIkit.notification({
-              message: "An error occurred while trying to verify the user.",
-              timeout: 5000,
-              status: "danger",
-            });
-          }
-        });
-      }
-    });
-  });
-</script>
 
 <%- include('partials/notification', { errorMessage: errorMessage, infoMessage: infoMessage }) %> <%-
 include('partials/footer') %>

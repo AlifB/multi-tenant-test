@@ -1,0 +1,124 @@
+<%- include('partials/header', { title: "Admin Panel", stylePaths: [] }) %>
+
+<nav
+  class="uk-navbar-container uk-light"
+  style="background-color: rgb(25, 103, 193)"
+>
+  <div class="uk-container uk-container-expand">
+    <div uk-navbar>
+      <div class="uk-navbar-left">
+        <a class="uk-navbar-item uk-logo" href="#" aria-label="Back to Home"
+          >Admin Panel</a
+        >
+      </div>
+      <div class="uk-navbar-right">
+        <a href="/home" class="uk-button uk-button-primary">Back to home</a>
+        <a class="uk-button uk-button-secondary" id="logout" href="/logout"
+          >Logout</a
+        >
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main>
+    <nav aria-label="Breadcrumb" class="uk-margin-left uk-margin-right uk-margin-top">
+        <ul class="uk-breadcrumb">
+            <li><a href="/admin-panel">Settings</a></li>
+            <li><span aria-current="page">Manage posts</span></li>
+        </ul>
+    </nav> 
+  <div class="uk-section">
+    <div class="uk-margin-left uk-margin-right">
+      <h2>Welcome to the admin panel.</h2>
+      <p>Here you can manage posts</p>
+    </div>
+  </div>
+  <div class="uk-section uk-padding-remove-vertical">
+    <div class="uk-margin-left uk-margin-right">
+      <h2>Users</h2>
+      <div class="uk-overflow-auto uk-margin-bottom">
+        <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
+          <thead>
+            <tr>
+              <th class="uk-table-shrink"></th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Tenant</th>
+              <th class="uk-width-1-4">Title</th>
+              <th class="uk-width-1-4">Content</th>
+              <th class="uk-table-shrink">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% posts.forEach(post => { %>
+            <tr id="post-<%= post.user.tenant %>-<%= post.id %>">
+              <td>
+                <div
+                  class="uk-flex uk-flex-center uk-flex-middle"
+                  style="
+                    width: 40px;
+                    height: 40px;
+                    background-color: coral;
+                    border-radius: 50%;
+                  "
+                >
+                  <%= post.user.name.toUpperCase().charAt(0) %>
+                </div>
+              </td>
+              <td><%= post.user.name %></td>
+              <td><%= post.user.email %></td>
+              <td><%= post.user.tenant %></td>
+              <td><%= post.title %></td>
+              <td><%= post.content %></td>
+              <td><a class="uk-button uk-button-danger delete-btn" style="width: max-content;" data-tenant="<%= post.user.tenant %>" data-postId="<%= post.id %>"><span uk-icon="icon: trash"></span></a></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    deleteButtons.forEach(button => {
+      button.addEventListener("click", async () => {
+        const postId = button.getAttribute("data-postId");
+        const tenant = button.getAttribute("data-tenant");
+        
+        UIkit.modal.confirm("Are you sure you want to delete this post?", { i18n: { ok: 'Yes', cancel: 'No' } }).then(async () => {
+          await deletePost(postId, tenant);
+        }, () => {});
+      });
+    });
+  });
+
+  const deletePost = async (postId, tenant) => {
+    try {
+      const response = await fetch(`/admin-panel/delete-post`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId: postId, tenant: tenant, _csrf: "<%= csrfToken %>" }),
+      });
+
+      if (response.ok) {
+        const json = await response.json();
+        UIkit.notification({ message: json.message, status: "success" });
+        document.getElementById(`post-${tenant}-${postId}`).remove();
+      } else {
+        throw new Error("Failed to delete post");
+      }
+    } catch (error) {
+        console.error(error);
+        UIkit.notification({ message: "Something went wrong while trying to delete the post", status: "danger" });
+    }
+  };
+</script>
+
+<%- include('partials/notification', { errorMessage: errorMessage, infoMessage: infoMessage }) %>
+<%- include('partials/footer') %>
