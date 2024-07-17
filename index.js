@@ -33,8 +33,10 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: "none",
+      secure: process.env.NODE_ENV === 'production',
+      domain: process.env.NODE_ENV === 'production' ? process.env.DOMAIN : 'localhost'
     }
 }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
