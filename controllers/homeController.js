@@ -20,6 +20,8 @@ exports.home = async (req, res) => {
     });
 
     return res.render("home", {
+      isAdmin: req.user.roles.includes("admin"),
+      path: req.path,
       name: req.user.name,
       tenant: req.user.tenant,
       isAdmin: req.user.roles.includes("admin"),

@@ -1,6 +1,8 @@
 exports.adminPanelOverview = async (req, res) => {
   try {
     res.render("adminpanel", {
+      isAdmin: req.user.roles.includes("admin"),
+      path: req.path,
       errorMessage: req.flash("error"),
       infoMessage: req.flash("info"),
     });
@@ -19,6 +21,8 @@ exports.adminPanelVerification = async (req, res) => {
     });
 
     res.render("adminpanelverify", {
+      isAdmin: req.user.roles.includes("admin"),
+      path: req.path,
       users: users,
       currentUser: req.user,
       csrfToken: res.locals.csrfToken,
@@ -57,6 +61,8 @@ exports.adminPanelPosts = async (req, res) => {
     posts.sort((a, b) => b.createdAt - a.createdAt);
 
     return res.render("adminpanelposts", {
+      isAdmin: req.user.roles.includes("admin"),
+      path: req.path,
       posts: posts,
       csrfToken: res.locals.csrfToken,
       errorMessage: req.flash("error"),

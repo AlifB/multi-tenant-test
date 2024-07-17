@@ -1,3 +1,4 @@
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -36,7 +37,12 @@ exports.login = async (req, res) => {
             expiresIn: "1h",
           });
           // save token in cookies
-          res.cookie("token", token, { httpOnly: true });
+          res.cookie("token", token, { 
+            httpOnly: true,
+            sameSite: "none",
+            secure: process.env.NODE_ENV === 'production',
+            domain: process.env.NODE_ENV === 'production' ? process.env.DOMAIN : 'localhost' 
+          });
           res.redirect("/home");
         } else {
           req.flash("error", "Invalid credentials");

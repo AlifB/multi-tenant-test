@@ -22,14 +22,15 @@ const path = require("path");
 const { csrfGeneration } = require("./middlewares/csrfGeneration");
 const app = express();
 
-console.log("Trust proxy set to " + process.env.TRUST_PROXY);
-app.set("trust proxy", process.env.TRUST_PROXY || 1);
+console.log("Trust proxy set to " + (process.env.NODE_ENV === 'production').toString());
+app.set("trust proxy", process.env.NODE_ENV === 'production');
 
 console.log("Setting up middlewares...");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
     secret: process.env.COOKIE_SECRET,
+    proxy: process.env.NODE_ENV === 'production',
     resave: false,
     saveUninitialized: true,
     cookie: {

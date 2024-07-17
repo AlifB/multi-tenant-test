@@ -1,25 +1,6 @@
 <%- include('partials/header', { title: "Admin Panel", stylePaths: [] }) %>
 
-<nav
-  class="uk-navbar-container uk-light"
-  style="background-color: rgb(25, 103, 193)"
->
-  <div class="uk-container uk-container-expand">
-    <div uk-navbar>
-      <div class="uk-navbar-left">
-        <a class="uk-navbar-item uk-logo" href="#" aria-label="Back to Home"
-          >Admin Panel</a
-        >
-      </div>
-      <div class="uk-navbar-right">
-        <a href="/home" class="uk-button uk-button-primary">Back to home</a>
-        <a class="uk-button uk-button-secondary" id="logout" href="/logout"
-          >Logout</a
-        >
-      </div>
-    </div>
-  </div>
-</nav>
+<%- include('partials/navbar', { title: "Admin Panel", isAdmin: isAdmin, path: path }) %>
 
 <main>
   <nav aria-label="Breadcrumb" class="uk-margin-left uk-margin-right uk-margin-top">

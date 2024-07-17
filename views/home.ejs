@@ -1,20 +1,6 @@
 <%- include('partials/header', { title: 'Home', stylePaths: ['/public/css/register.css'] }) %>
 
-<nav class="uk-navbar-container uk-light" style="background-color: rgb(25, 103, 193);">
-  <div class="uk-container uk-container-expand">
-      <div uk-navbar>
-          <div class="uk-navbar-left">
-              <a class="uk-navbar-item uk-logo" href="#" aria-label="Back to Home"><%= tenant %></a>
-          </div>
-          <div class="uk-navbar-right">
-            <% if (isAdmin) { %>
-              <a href="/admin-panel" class="uk-button uk-button-primary">Admin Panel</a>
-            <% } %>
-            <a class="uk-button uk-button-secondary" id="logout" href="/logout">Logout</a>
-          </div>
-      </div>
-  </div>
-</nav>
+<%- include('partials/navbar', { title: "Admin Panel", isAdmin: isAdmin, path: path }) %>
 
 <main>
   <div class="uk-section">
