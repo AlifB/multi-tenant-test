@@ -44,6 +44,14 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(flash())
 app.use(csrfGeneration);
 
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== 'development' && req.protocol !== 'https') {
+    const redirectUrl = `https://${process.env.DOMAIN}${req.originalUrl}`;
+    return res.redirect(301, redirectUrl);
+  }
+  next();
+});
+
 console.log("Setting up static files...");
 app.use(
   "/plugins/uikit",
